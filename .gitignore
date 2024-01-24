@@ -24,3 +24,5 @@ build-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vite/

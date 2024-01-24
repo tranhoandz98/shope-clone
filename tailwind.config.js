@@ -25,8 +25,7 @@ export default {
           paddingRight: theme('spacing.4')
         }
       })
-    }),
-    require('@tailwindcss/line-clamp')
+    })
   ],
   mode: 'jit',
   darkMode: 'class',

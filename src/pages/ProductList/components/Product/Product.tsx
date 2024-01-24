@@ -10,7 +10,7 @@ interface Props {
 
 export default function Product({ product }: Props) {
   return (
-    <Link to={routerMain.HOME}>
+    <Link to={`${routerMain.HOME}${product._id}`}>
       <div
         className='bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform
       text-sm overflow-hidden

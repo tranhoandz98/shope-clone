@@ -15,6 +15,7 @@ export default interface ProductType {
   image: string
   createdAt: string
   updatedAt: string
+  description: string
 }
 
 export interface ProductListType {

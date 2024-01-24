@@ -26,3 +26,7 @@ export const formatNumberToSocialStyle = (value: number) => {
     .replace('.', ',')
     .toLowerCase()
 }
+
+export const reteSale = (original: number, sale: number) => {
+  return Math.round(((original - sale) / original) * 100) + '%'
+}
