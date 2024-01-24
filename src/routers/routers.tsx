@@ -7,6 +7,7 @@ import Profile from '~/pages/Profile'
 import Register from '~/pages/Register'
 import ProtectedRoute from './ProtectedRoute'
 import RejectedRoute from './RejectedRoute'
+import ProductDetail from '~/pages/ProductDetail'
 
 export const routers = [
   {
@@ -44,6 +45,14 @@ export const routers = [
         )
       }
     ]
+  },
+  {
+    path: routerMain.HOME + routerMain.PRODUCT_DETAIL,
+    element: (
+      <MainLayout>
+        <ProductDetail />
+      </MainLayout>
+    )
   },
   {
     path: routerMain.HOME,

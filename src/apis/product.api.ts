@@ -9,6 +9,6 @@ export const productApi = {
     return http.get<SuccessResponseApi<ProductListType>>(URL, { params })
   },
   getById: (id: string) => {
-    return http.get<SuccessResponseApi<Product>>(`${URL}${id}`)
+    return http.get<SuccessResponseApi<Product>>(`${URL}/${id}`)
   }
 }

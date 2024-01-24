@@ -11,3 +11,10 @@ export default function useApiProduct(queryConfig: QueryConfig) {
     staleTime: 3 * 60 * 1000
   })
 }
+export function useApiProductItem(id: string) {
+  return useQuery({
+    queryKey: ['product', id],
+    queryFn: () => productApi.getById(id),
+    placeholderData: (previousData) => previousData
+  })
+}

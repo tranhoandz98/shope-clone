@@ -1,9 +1,9 @@
 import Pagination from '~/components/Pagination'
 import useApiProduct from '~/hook/api/useApiProduct'
 import useQueryConfig from '~/hook/useQueryConfig'
-import AsideFilter from './AsideFilter'
-import Product from './Product'
-import SortProductList from './SortProductList'
+import AsideFilter from './components/AsideFilter'
+import Product from './components/Product'
+import SortProductList from './components/SortProductList'
 import useApiCategory from '~/hook/api/useApiCategory'
 
 export default function ProductList() {

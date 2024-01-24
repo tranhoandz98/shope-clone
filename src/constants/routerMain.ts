@@ -3,6 +3,7 @@ export const routerMain = {
   HOME: '/',
   REGISTER: '/register',
   CART: '/cart',
-  PROFILE: 'profile',
-  HISTORY_PURCHASE: 'history-purchase'
+  PROFILE: '/profile',
+  HISTORY_PURCHASE: '/history-purchase',
+  PRODUCT_DETAIL: '/:id'
 } as const
