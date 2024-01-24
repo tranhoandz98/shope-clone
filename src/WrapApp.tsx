@@ -14,7 +14,7 @@ function WrapApp() {
   return (
     <>
       <ErrorBoundary>
-        <BrowserRouter>
+        <BrowserRouter basename='/shope-clone'>
           <QueryClientProvider client={queryClient}>
             <AppProvider>
               <App />
