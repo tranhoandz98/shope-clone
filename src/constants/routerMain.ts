@@ -5,5 +5,5 @@ export const routerMain = {
   CART: '/cart',
   PROFILE: '/profile',
   HISTORY_PURCHASE: '/history-purchase',
-  PRODUCT_DETAIL: '/:id'
+  PRODUCT_DETAIL: '/:nameId'
 } as const

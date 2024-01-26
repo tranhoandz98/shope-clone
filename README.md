@@ -1,7 +1,8 @@
 # Shope Clone
 
 ## Demo 
-https://tranhoandz98.github.io/shope-clone/
+<a href="https://tranhoandz98.github.io/shope-clone/" target="_blank">Link demo</a>
+
 
 ### React + TypeScript + Vite
 
