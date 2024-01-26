@@ -1,4 +1,5 @@
 import DOMPurify from 'dompurify'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router'
 import Button from '~/components/Button'
 import InputNumber from '~/components/InputNumber'
@@ -6,47 +7,121 @@ import ProductRating from '~/components/ProductRating'
 import ChevronLeft from '~/components/SvgIcon/ChevronLeft'
 import ChevronRight from '~/components/SvgIcon/ChevronRight'
 import { useApiProductItem } from '~/hook/api/useApiProduct'
-import { formatCurrency, formatNumberToSocialStyle, reteSale } from '~/utils/utils'
+import ProductType from '~/types/product.type'
+import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, reteSale } from '~/utils/utils'
 
 export default function ProductDetail() {
-  const { id } = useParams()
+  const { nameId } = useParams()
+
+  const id = getIdFromNameId(nameId as string)
   const queryProductItem = useApiProductItem(id as string)
   const dataProductItem = queryProductItem.data?.data.data
+
+  const [currentIndexImage, setCurrentIndexImage] = useState([0, 5])
+  const [activeImage, setActiveImage] = useState('')
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  const currentImages = useMemo(
+    () => (dataProductItem ? dataProductItem.images.slice(...currentIndexImage) : []),
+    [dataProductItem, currentIndexImage]
+  )
+
+  useEffect(() => {
+    if (dataProductItem && dataProductItem.images.length > 0) {
+      setActiveImage(dataProductItem.images[0])
+    }
+  }, [dataProductItem])
+
+  const chooseActive = (img: string) => {
+    setActiveImage(img)
+  }
+
+  const next = () => {
+    if (currentIndexImage[1] < (dataProductItem as ProductType)?.images.length) {
+      setCurrentIndexImage((prev) => [prev[0] + 1, prev[1] + 1])
+    }
+  }
+
+  const prev = () => {
+    if (currentIndexImage[0] > 0) {
+      setCurrentIndexImage((prev) => [prev[0] - 1, prev[1] - 1])
+    }
+  }
+
+  const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    const image = imgRef.current as HTMLImageElement
+    const { naturalHeight, naturalWidth } = image
+    // Cách 1: Lấy offsetX, offsetY đơn giản khi chúng ta đã xử lý được bubble event
+    // const { offsetX, offsetY } = event.nativeEvent
+
+    // Cách 2: Lấy offsetX, offsetY khi chúng ta không xử lý được bubble event
+    const offsetX = event.pageX - (rect.x + window.scrollX)
+    console.log('offsetX: ', offsetX)
+    const offsetY = event.pageY - (rect.y + window.scrollY)
+    console.log('offsetY: ', offsetY)
+
+    const top = offsetY * (1 - naturalHeight / rect.height)
+    const left = offsetX * (1 - naturalWidth / rect.width)
+    image.style.width = naturalWidth + 'px'
+    image.style.height = naturalHeight + 'px'
+    image.style.maxWidth = 'unset'
+    image.style.top = top + 'px'
+    image.style.left = left + 'px'
+  }
+
+  const handleRemoveZoom = () => {
+    imgRef.current?.removeAttribute('style')
+  }
+
   if (queryProductItem.isFetching) {
     return <>Loading...</>
   }
+
   if (!dataProductItem) return null
   return (
     <div className='bg-gray-200 py-6'>
-      <div className='bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='bg-white p-4 shadow'>
           <div className='grid grid-cols-12 gap-9'>
             <div className='col-span-5'>
-              <div className='relative w-full pt-[100%] shadow'>
+              <div
+                className='relative w-full cursor-zoom-in overflow-hidden pt-[100%] shadow'
+                onMouseMove={handleZoom}
+                onMouseLeave={handleRemoveZoom}
+              >
                 <img
-                  src={dataProductItem.image}
+                  src={activeImage}
                   alt={dataProductItem.name}
-                  className='absolute top-0 left-0 bg-white w-full h-full object-cover'
+                  className='absolute top-0 left-0 h-full w-full bg-white object-cover'
+                  ref={imgRef}
                 />
               </div>
               <div className='relative mt-4 grid grid-cols-5 gap-1'>
-                <button className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  className='absolute left-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={prev}
+                >
                   <ChevronLeft />
                 </button>
-                {dataProductItem.images.slice(0, 5).map((item, index) => {
-                  const isActive = index === 0
+                {currentImages.map((item) => {
+                  const isActive = item === activeImage
                   return (
                     <div className='relative w-full pt-[100%]' key={item}>
                       <img
                         src={item}
                         alt={item}
                         className='absolute top-0 left-0 bg-white w-full h-full object-cover'
+                        onMouseEnter={() => chooseActive(item)}
                       />
                       {isActive && <div className='absolute inset-0 border-2 border-primary'></div>}
                     </div>
                   )
                 })}
-                <button className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'>
+                <button
+                  className='absolute right-0 top-1/2 z-10 h-9 w-5 -translate-y-1/2 bg-black/20 text-white'
+                  onClick={next}
+                >
                   <ChevronRight />
                 </button>
               </div>
@@ -106,8 +181,8 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className='mt-8 bg-white p-4 shadow'>
-        <div className='container'>
+      <div className='container'>
+        <div className='mt-8 bg-white p-4 shadow'>
           <div className='rounde bg-gray-50 p-4 text-lg capitalize'>Mô tả sản phẩm</div>
           <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(dataProductItem.description) }}></div>

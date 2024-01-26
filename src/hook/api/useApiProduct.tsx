@@ -15,6 +15,7 @@ export function useApiProductItem(id: string) {
   return useQuery({
     queryKey: ['product', id],
     queryFn: () => productApi.getById(id),
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
+    enabled: !!id
   })
 }
