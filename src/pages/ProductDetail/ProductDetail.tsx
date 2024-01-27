@@ -9,6 +9,7 @@ import ChevronRight from '~/components/SvgIcon/ChevronRight'
 import { useApiProductItem } from '~/hook/api/useApiProduct'
 import ProductType from '~/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, reteSale } from '~/utils/utils'
+import ProductRelate from './component/ProductRelate/ProductRelate'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
@@ -187,6 +188,11 @@ export default function ProductDetail() {
           <div className='mx-4 mt-12 mb-4 text-sm leading-loose'>
             <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(dataProductItem.description) }}></div>
           </div>
+        </div>
+      </div>
+      <div className='container'>
+        <div className='mt-8'>
+          <ProductRelate productDetail={dataProductItem} />
         </div>
       </div>
     </div>

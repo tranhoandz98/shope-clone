@@ -37,13 +37,13 @@ export default function RatingStar({ queryConfig }: Props) {
                 .map((_, indexStar) => {
                   if (indexStar < 5 - index) {
                     return (
-                      <div key={index}>
+                      <div key={indexStar}>
                         <StarIcon className='w-5 h-5 ' isFill={true} />
                       </div>
                     )
                   } else {
                     return (
-                      <div key={index}>
+                      <div key={indexStar}>
                         <StarIcon className='w-5 h-5 ' isFill={false} />
                       </div>
                     )
