@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import { authApi } from '~/apis/auth.api'
 import { routerMain } from '~/constants/routerMain'
 import { AppContext } from '~/context/app.context'
@@ -15,8 +15,22 @@ import QuestionMarkCircleIcon from '../SvgIcon/QuestionMarkCircleIcon'
 import SearchIcon from '../SvgIcon/SearchIcon'
 import ShopeeIcon from '../SvgIcon/ShoppeIcon'
 import { getAvatarUrl } from '~/utils/utils'
+import { useForm } from 'react-hook-form'
+import { Schema, schema } from '~/utils/rules'
+import { yupResolver } from '@hookform/resolvers/yup'
+import omit from 'lodash/omit'
+import useQueryConfig from '~/hook/useQueryConfig'
+
+type FormData = Pick<Schema, 'name'>
 
 export default function Header() {
+  const searchSchema = schema.pick(['name'])
+  const navigate = useNavigate()
+
+  const { register, handleSubmit } = useForm<FormData>({
+    resolver: yupResolver(searchSchema)
+  })
+
   const { i18n } = useTranslation()
   const currentLanguage = locales[i18n.language as keyof typeof locales]
   const { setIsAuthenticated, isAuthenticated, profile, setProfile } = useContext(AppContext)
@@ -24,6 +38,8 @@ export default function Header() {
   const changeLanguage = (lng: 'en' | 'vi') => {
     i18n.changeLanguage(lng)
   }
+
+  const queryConfig = useQueryConfig()
 
   const logoutMutation = useMutation({
     mutationFn: () => authApi.logout(),
@@ -36,6 +52,26 @@ export default function Header() {
   const handleLogout = () => {
     logoutMutation.mutate()
   }
+
+  const onSubmitSearch = handleSubmit((data) => {
+    const config = queryConfig.order
+      ? omit(
+          {
+            ...queryConfig,
+            name: data.name
+          },
+          ['order', 'sort_by']
+        )
+      : {
+          ...queryConfig,
+          name: data.name
+        }
+
+    navigate({
+      pathname: routerMain.HOME,
+      search: createSearchParams(config).toString()
+    })
+  })
 
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)]'>
@@ -102,10 +138,7 @@ export default function Header() {
                   className='h-full w-full rounded-full object-cover'
                 />
               </div>
-              <div>
-                {profile?.email}
-                asds
-              </div>
+              <div>{profile?.email}</div>
             </Popover>
           )}
           {!isAuthenticated && (
@@ -125,16 +158,15 @@ export default function Header() {
           <Link to={routerMain.HOME} className='col-span-2'>
             <ShopeeIcon className='h-14 fill-white' />
           </Link>
-          <form className='col-span-9'>
+          <form className='col-span-9' onSubmit={onSubmitSearch}>
             <div className='bg-white rounded-sm p-1 flex'>
               <input
                 type='text'
-                name='search'
-                id=''
                 placeholder='LÌ XÌ TẾT ĐẾN 90%'
-                className='text-back px-3 py-2 flex-grow border-none outline-none bg-transparent'
+                className='text-back px-3 py-2 flex-grow border-none outline-none bg-transparent text-gray-800'
+                {...register('name')}
               />
-              <button className='rounded-sm py-2 px-6 bg-primary hover:opacity-90 flex-shrink-0'>
+              <button className='rounded-sm py-2 px-6 bg-primary hover:opacity-90 flex-shrink-0' type='submit'>
                 <SearchIcon />
               </button>
             </div>
