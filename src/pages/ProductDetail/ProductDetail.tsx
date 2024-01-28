@@ -1,18 +1,25 @@
+import { useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router'
+import { toast } from 'react-toastify'
 import Button from '~/components/Button'
-import InputNumber from '~/components/InputNumber'
 import ProductRating from '~/components/ProductRating'
+import QuantityController from '~/components/QuantityController/QuantityController'
 import ChevronLeft from '~/components/SvgIcon/ChevronLeft'
 import ChevronRight from '~/components/SvgIcon/ChevronRight'
+import { purchasesStatus } from '~/constants/purchases'
+import { queryKeyApi } from '~/constants/queryKeyApi'
 import { useApiProductItem } from '~/hook/api/useApiProduct'
 import ProductType from '~/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, reteSale } from '~/utils/utils'
 import ProductRelate from './component/ProductRelate/ProductRelate'
+import { useAddPurchaseApi } from '~/hook/api/usePurchaseApi'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
+  const [buyCount, setBuyCount] = useState(1)
+  const queryClient = useQueryClient()
 
   const id = getIdFromNameId(nameId as string)
   const queryProductItem = useApiProductItem(id as string)
@@ -27,6 +34,7 @@ export default function ProductDetail() {
     [dataProductItem, currentIndexImage]
   )
 
+  const addToCartMutation = useAddPurchaseApi()
   useEffect(() => {
     if (dataProductItem && dataProductItem.images.length > 0) {
       setActiveImage(dataProductItem.images[0])
@@ -58,9 +66,7 @@ export default function ProductDetail() {
 
     // Cách 2: Lấy offsetX, offsetY khi chúng ta không xử lý được bubble event
     const offsetX = event.pageX - (rect.x + window.scrollX)
-    console.log('offsetX: ', offsetX)
     const offsetY = event.pageY - (rect.y + window.scrollY)
-    console.log('offsetY: ', offsetY)
 
     const top = offsetY * (1 - naturalHeight / rect.height)
     const left = offsetX * (1 - naturalWidth / rect.width)
@@ -73,6 +79,22 @@ export default function ProductDetail() {
 
   const handleRemoveZoom = () => {
     imgRef.current?.removeAttribute('style')
+  }
+
+  const handleBuyCount = (value: number) => {
+    setBuyCount(value)
+  }
+
+  const addToCart = () => {
+    addToCartMutation.mutate(
+      { buy_count: buyCount, product_id: dataProductItem?._id as string },
+      {
+        onSuccess: (data) => {
+          toast.success(data.data.message, { autoClose: 1000 })
+          queryClient.invalidateQueries({ queryKey: [queryKeyApi.purchases, { status: purchasesStatus.inCart }] })
+        }
+      }
+    )
   }
 
   if (queryProductItem.isFetching) {
@@ -155,17 +177,13 @@ export default function ProductDetail() {
               <div className='mt-8 flex items-center'>
                 <div className='capitalize text-gray-500'>Số lượng</div>
                 <div className='ml-10 flex items-center'>
-                  <button className='flex h-8 w-8 rounded-l-sm items-center justify-center border border-gray-300 text-gray-600'>
-                    -
-                  </button>
-                  <InputNumber
-                    value={1}
-                    classNameError='hidden'
-                    classNameInput='h-8 w-14 border-t p-1 text-center out-line-none border-b border-gray-300 text-gray-600'
+                  <QuantityController
+                    value={buyCount}
+                    onIncrease={handleBuyCount}
+                    onDecrease={handleBuyCount}
+                    onType={handleBuyCount}
+                    max={dataProductItem.quantity}
                   />
-                  <button className='flex h-8 w-8 rounded-r-sm items-center justify-center border border-gray-300 text-gray-600'>
-                    +
-                  </button>
                 </div>
                 <div className='ml-6 text-sm text-gray-500'>{dataProductItem.quantity} số lượng sản phẩm có sẵn</div>
               </div>
@@ -173,6 +191,7 @@ export default function ProductDetail() {
                 <Button
                   className=' py-3 px-3  text-primary hover:text-white hover:bg-primary/80
               border border-primary bg-primary/10 capitalize'
+                  onClick={addToCart}
                 >
                   Thêm vào giỏ hàng
                 </Button>

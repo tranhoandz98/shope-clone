@@ -1,18 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useMutation } from '@tanstack/react-query'
 import { useContext } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
-import { authApi } from '~/apis/auth.api'
 import Button from '~/components/Button'
 import Input from '~/components/Input/Input'
 import { routerMain } from '~/constants/routerMain'
 import { AppContext } from '~/context/app.context'
+import { useAuthLoginApi } from '~/hook/api/useAuthApi'
+import { FormDataLogin } from '~/types/auth.type'
 import { ErrorResponseApi } from '~/types/utils.type'
-import { Schema, schema } from '~/utils/rules'
+import { schema } from '~/utils/rules'
 import { isAxiosUnprocessableEntityError } from '~/utils/utils'
-
-type FormData = Pick<Schema, 'email' | 'password'>
 
 export default function Login() {
   const loginSchema = schema.pick(['email', 'password'])
@@ -25,13 +23,11 @@ export default function Login() {
     setError,
     handleSubmit,
     formState: { errors }
-  } = useForm<FormData>({
+  } = useForm<FormDataLogin>({
     resolver: yupResolver(loginSchema)
   })
 
-  const loginAccountMutation = useMutation({
-    mutationFn: (body: FormData) => authApi.login(body)
-  })
+  const loginAccountMutation = useAuthLoginApi()
 
   const onSubmit = handleSubmit((data) => {
     loginAccountMutation.mutate(data, {
@@ -41,12 +37,12 @@ export default function Login() {
         navigate(routerMain.HOME)
       },
       onError: (error) => {
-        if (isAxiosUnprocessableEntityError<ErrorResponseApi<FormData>>(error)) {
+        if (isAxiosUnprocessableEntityError<ErrorResponseApi<FormDataLogin>>(error)) {
           const formError = error.response?.data.data
           if (formError) {
             Object.keys(formError).forEach((key) => {
-              setError(key as keyof FormData, {
-                message: formError[key as keyof FormData],
+              setError(key as keyof FormDataLogin, {
+                message: formError[key as keyof FormDataLogin],
                 type: 'server'
               })
             })
