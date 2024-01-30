@@ -1,10 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import classNames from 'classnames'
 import omit from 'lodash/omit'
-import { Controller, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
+import { ObjectSchema } from 'yup'
 import Button from '~/components/Button'
-import InputNumber from '~/components/InputNumber'
+import InputV2 from '~/components/InputV2'
 import ChivonIcon from '~/components/SvgIcon/ChivonIcon'
 import FilterIcon from '~/components/SvgIcon/FilterIcon'
 import ListIcon from '~/components/SvgIcon/ListIcon'
@@ -14,7 +15,6 @@ import CategoryType from '~/types/category.type'
 import { NoUndefineField } from '~/types/utils.type'
 import { Schema, schema } from '~/utils/rules'
 import RatingStar from '../RatingStar'
-import { ObjectSchema } from 'yup'
 
 interface Props {
   queryConfig: QueryConfig
@@ -111,47 +111,32 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Controller
+            <InputV2
               control={control}
               name='price_min'
-              render={({ field }) => {
-                return (
-                  <InputNumber
-                    type='text'
-                    className='grow'
-                    placeholder='đ Từ'
-                    {...field}
-                    onChange={(event) => {
-                      field.onChange(event)
-                      trigger('price_max')
-                    }}
-                    classNameError='hidden'
-                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  />
-                )
+              type='number'
+              className='grow'
+              placeholder='đ Từ'
+              onChange={() => {
+                trigger('price_max')
               }}
+              classNameError='hidden'
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
             />
 
             <div className='mx-2 mt-2 shrink-0'>-</div>
-            <Controller
-              control={control}
+
+            <InputV2
               name='price_max'
-              render={({ field }) => {
-                return (
-                  <InputNumber
-                    type='text'
-                    className='grow'
-                    placeholder='đ Đến'
-                    {...field}
-                    onChange={(event) => {
-                      field.onChange(event)
-                      trigger('price_min')
-                    }}
-                    classNameError='hidden'
-                    classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
-                  />
-                )
+              control={control}
+              type='number'
+              className='grow'
+              placeholder='đ Đến'
+              onChange={() => {
+                trigger('price_min')
               }}
+              classNameError='hidden'
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
             />
           </div>
           <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm text-center'>{errors?.price_min?.message}</div>

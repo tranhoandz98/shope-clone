@@ -60,6 +60,9 @@ export default function Header() {
     return purchasesInCart && purchasesInCart?.length > MAX_PURCHASES ? purchasesInCart?.length - MAX_PURCHASES : ''
   }
 
+  const handleWatchCart = () => {
+    navigate(routerMain.CART)
+  }
   return (
     <div className='pb-5 pt-2 bg-[linear-gradient(-180deg,#f53d2d,#f63)]'>
       <div className='container text-white text-sm'>
@@ -106,7 +109,10 @@ export default function Header() {
                       </div>
                       <div className='mt-4 flex justify-between items-center p-3'>
                         <div className='text-sm capitalize'>{genBuyAddToCart()} Thêm vào giỏ hàng</div>
-                        <button className='bg-primary hover:bg-opacity-80 px-4 py-2 text-white rounded-sm capitalize'>
+                        <button
+                          className='bg-primary hover:bg-opacity-80 px-4 py-2 text-white rounded-sm capitalize'
+                          onClick={handleWatchCart}
+                        >
                           xem giỏ hàng
                         </button>
                       </div>
