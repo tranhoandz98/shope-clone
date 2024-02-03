@@ -11,6 +11,9 @@ import BellIcon from '../SvgIcon/BellIcon'
 import ChevronDownIcon from '../SvgIcon/ChevronDownIcon'
 import GlobeAltIcon from '../SvgIcon/GlobeAltIcon'
 import QuestionMarkCircleIcon from '../SvgIcon/QuestionMarkCircleIcon'
+import { useQueryClient } from '@tanstack/react-query'
+import { queryKeyApi } from '~/constants/queryKeyApi'
+import { purchasesStatus } from '~/constants/purchases'
 
 export default function NavHeader() {
   const { i18n } = useTranslation()
@@ -23,11 +26,14 @@ export default function NavHeader() {
 
   const logoutMutation = useAuthLogoutApi()
 
+  const queryClient = useQueryClient()
+
   const handleLogout = () => {
     logoutMutation.mutate(undefined, {
       onSuccess: () => {
         setIsAuthenticated(false)
         setProfile(null)
+        queryClient.removeQueries({ queryKey: [queryKeyApi.purchases, { status: purchasesStatus.inCart }] })
       }
     })
   }

@@ -2,22 +2,23 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import omit from 'lodash/omit'
 import { useForm } from 'react-hook-form'
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
+import ImgNotFound from '~/assets/images/not_found.png'
+import { purchasesStatus } from '~/constants/purchases'
 import { routerMain } from '~/constants/routerMain'
+import usePurchaseApi from '~/hook/api/usePurchaseApi'
 import useQueryConfig from '~/hook/useQueryConfig'
 import { Schema, schema } from '~/utils/rules'
+import { formatCurrency } from '~/utils/utils'
 import NavHeader from '../NavHeader'
 import Popover from '../Popover'
 import CartIcon from '../SvgIcon/CartIcon'
 import SearchIcon from '../SvgIcon/SearchIcon'
 import ShopeeIcon from '../SvgIcon/ShoppeIcon'
-import { purchasesStatus } from '~/constants/purchases'
-import ImgNotFound from '~/assets/images/not_found.png'
-import { formatCurrency } from '~/utils/utils'
-import usePurchaseApi from '~/hook/api/usePurchaseApi'
 
 type FormData = Pick<Schema, 'name'>
 
 export default function Header() {
+
   const searchSchema = schema.pick(['name'])
   const navigate = useNavigate()
 
@@ -102,7 +103,7 @@ export default function Header() {
                               <div className='truncate'>{item.product.name}</div>
                             </div>
                             <div className='ml-2 flex-shrink-0'>
-                              <div className='text-primary'>đ {formatCurrency(item.product.price)}</div>
+                              <div className='text-primary'>₫ {formatCurrency(item.product.price)}</div>
                             </div>
                           </div>
                         ))}
@@ -131,9 +132,11 @@ export default function Header() {
             >
               <Link to={routerMain.CART} className='relative'>
                 <CartIcon className='w-8 h-8' />
-                <div className='absolute rounded-[2.75rem] min-w-[.6875rem] text-center -top-[.3875rem] left-[1.25rem] bg-white px-[5px] text-primary shadow leading-[1.2em] h-4 self-center border-1 border-primary shadow-primary'>
-                  {purchasesInCart?.length}
-                </div>
+                {purchasesInCart && (
+                  <div className='absolute rounded-[2.75rem] min-w-[.6875rem] text-center -top-[.3875rem] left-[1.25rem] bg-white px-[5px] text-primary shadow leading-[1.2em] h-4 self-center border-1 border-primary shadow-primary'>
+                    {purchasesInCart?.length}
+                  </div>
+                )}
               </Link>
             </Popover>
           </div>

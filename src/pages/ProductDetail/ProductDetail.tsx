@@ -176,15 +176,13 @@ export default function ProductDetail() {
               </div>
               <div className='mt-8 flex items-center'>
                 <div className='capitalize text-gray-500'>Số lượng</div>
-                <div className='ml-10 flex items-center'>
-                  <QuantityController
-                    value={buyCount}
-                    onIncrease={handleBuyCount}
-                    onDecrease={handleBuyCount}
-                    onType={handleBuyCount}
-                    max={dataProductItem.quantity}
-                  />
-                </div>
+                <QuantityController
+                  value={buyCount}
+                  onIncrease={handleBuyCount}
+                  onDecrease={handleBuyCount}
+                  onType={handleBuyCount}
+                  max={dataProductItem.quantity}
+                />
                 <div className='ml-6 text-sm text-gray-500'>{dataProductItem.quantity} số lượng sản phẩm có sẵn</div>
               </div>
               <div className='mt-8 flex items-center gap-2'>

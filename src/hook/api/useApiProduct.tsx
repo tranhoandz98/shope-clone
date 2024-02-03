@@ -8,7 +8,6 @@ export default function useApiProduct(queryConfig: QueryConfig) {
   return useQuery({
     queryKey: [queryKeyApi.products, queryConfig],
     queryFn: () => productApi.getList(queryConfig as ProductListConfigType),
-    placeholderData: (previousData) => previousData,
     staleTime: 3 * 60 * 1000
   })
 }
@@ -17,7 +16,6 @@ export function useApiProductInDetail(queryConfig: ProductListConfigType, item: 
   return useQuery({
     queryKey: [queryKeyApi.products, queryConfig],
     queryFn: () => productApi.getList(queryConfig as ProductListConfigType),
-    placeholderData: (previousData) => previousData,
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(item)
   })

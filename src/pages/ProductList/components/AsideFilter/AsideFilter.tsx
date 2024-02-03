@@ -116,7 +116,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               name='price_min'
               type='number'
               className='grow'
-              placeholder='đ Từ'
+              placeholder='₫ Từ'
               onChange={() => {
                 trigger('price_max')
               }}
@@ -131,7 +131,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
               control={control}
               type='number'
               className='grow'
-              placeholder='đ Đến'
+              placeholder='₫ Đến'
               onChange={() => {
                 trigger('price_min')
               }}

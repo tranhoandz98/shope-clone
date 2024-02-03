@@ -9,8 +9,8 @@ export const getAccessTokenFromLS = () => {
 }
 
 export const clearAuthFromLS = () => {
+  localStorage.removeItem('profile')
   return localStorage.removeItem('access_token')
-  return localStorage.removeItem('profile')
 }
 
 export const getProfileFromLS = () => {

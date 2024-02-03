@@ -46,12 +46,8 @@ export const routers = [
         )
       },
       {
-        path: routerMain.PROFILE,
-        element: (
-          <MainLayout>
-            <Cart />
-          </MainLayout>
-        )
+        path: routerMain.CART,
+        element: <Cart />
       }
     ]
   },
