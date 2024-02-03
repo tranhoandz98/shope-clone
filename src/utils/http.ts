@@ -39,7 +39,7 @@ export class Http {
           this.accessToken = data.data.access_token
           setAccessTokenToLS(this.accessToken)
           setProfileToLS(data.data.user)
-        } else if (url === 'logout') {
+        } else if (url === '/logout') {
           this.accessToken = ''
           clearAuthFromLS()
         }

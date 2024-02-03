@@ -6,7 +6,7 @@ export default function useApiCategory() {
   return useQuery({
     queryKey: [queryKeyApi.categories],
     queryFn: () => categoryApi.getList(),
-    placeholderData: (previousData) => previousData,
+    // placeholderData: (previousData) => previousData,
     staleTime: 3 * 60 * 1000
   })
 }

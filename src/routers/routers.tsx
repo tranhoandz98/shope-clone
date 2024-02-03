@@ -8,6 +8,7 @@ import Register from '~/pages/Register'
 import ProtectedRoute from './ProtectedRoute'
 import RejectedRoute from './RejectedRoute'
 import ProductDetail from '~/pages/ProductDetail'
+import Cart from '~/pages/Cart'
 
 export const routers = [
   {
@@ -43,6 +44,10 @@ export const routers = [
             <Profile />
           </MainLayout>
         )
+      },
+      {
+        path: routerMain.CART,
+        element: <Cart />
       }
     ]
   },

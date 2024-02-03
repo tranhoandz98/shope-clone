@@ -27,11 +27,11 @@ export default function Product({ product }: Props) {
           <div className='min-h-[2rem] line-clamp-2 '>{product.name}</div>
           <div className='flex items-center mt-3 gap-2s'>
             <div className='line-through max-w-[50%] text-gray-500 truncate'>
-              <span className='text-xs'>đ</span>
+              <span className='text-xs'>₫</span>
               {formatCurrency(product.price_before_discount)}
             </div>
             <div className=' max-w-[50%] text-primary truncate ml-2'>
-              <span className='text-xs'>đ</span>
+              <span className='text-xs'>₫</span>
               {formatCurrency(product.price)}
             </div>
           </div>
