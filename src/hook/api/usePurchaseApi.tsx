@@ -18,3 +18,7 @@ export default function usePurchaseApi(params: { status: PurchaseListStatus }) {
 export function useAddPurchaseApi() {
   return useMutation({ mutationFn: (body: PurChaseBodyType) => purchaseApi.addToCart(body) })
 }
+
+export function useUpdatePurchaseApi() {
+  return useMutation({ mutationFn: (body: PurChaseBodyType) => purchaseApi.updatePurchase(body) })
+}

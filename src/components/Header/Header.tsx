@@ -18,7 +18,6 @@ import ShopeeIcon from '../SvgIcon/ShoppeIcon'
 type FormData = Pick<Schema, 'name'>
 
 export default function Header() {
-
   const searchSchema = schema.pick(['name'])
   const navigate = useNavigate()
 
