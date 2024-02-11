@@ -4,11 +4,16 @@ import Button from '~/components/Button'
 import QuantityController from '~/components/QuantityController/QuantityController'
 import { purchasesStatus } from '~/constants/purchases'
 import { routerMain } from '~/constants/routerMain'
-import usePurchaseApi, { useUpdatePurchaseApi } from '~/hook/api/usePurchaseApi'
+import usePurchaseApi, {
+  useBuyPurchaseApi,
+  useDeletePurchaseApi,
+  useUpdatePurchaseApi
+} from '~/hook/api/usePurchaseApi'
 import { PurchaseType } from '~/types/purchase.type'
 import { formatCurrency, formatNumberToSocialStyle, generateNameId } from '~/utils/utils'
 import { produce } from 'immer'
 import { keyBy } from 'lodash'
+import { toast } from 'react-toastify'
 interface ExtendedPurchases extends PurchaseType {
   disabled: boolean
   checked: boolean
@@ -21,6 +26,17 @@ export default function Cart() {
   const updatePurchaseMutation = useUpdatePurchaseApi()
 
   const purchasesInCart = purchasesInCartData?.data.data
+  const checkedPurchases = extendedPurchases.filter((purchase) => purchase.checked)
+  const checkedPurchasesCount = checkedPurchases.length
+  const totalCheckedPurchase = checkedPurchases.reduce((result, current) => {
+    return result + current.product.price * current.buy_count
+  }, 0)
+
+  const totalOriginCheckedPurchase = checkedPurchases.reduce((result, current) => {
+    return result + current.product.price_before_discount * current.buy_count
+  }, 0)
+
+  const totalSavePurchase = totalOriginCheckedPurchase - totalCheckedPurchase
 
   const isCheckedAll = extendedPurchases.length > 0 ? extendedPurchases?.every((purchase) => purchase.checked) : false
   useEffect(() => {
@@ -80,11 +96,59 @@ export default function Cart() {
     )
   }
 
+  const deletePurchaseMutation = useDeletePurchaseApi()
+
+  const handleDeletePurchase = (purchaseIndex: number) => () => {
+    const purchaseId = extendedPurchases[purchaseIndex]._id
+    deletePurchaseMutation.mutate([purchaseId], {
+      onSuccess: () => {
+        refetch()
+      }
+    })
+  }
+
+  const handleDeleteManyPurchase = () => {
+    const purchaseIds = checkedPurchases.map((purchase) => purchase._id)
+    deletePurchaseMutation.mutate(purchaseIds, {
+      onSuccess: () => {
+        refetch()
+      }
+    })
+  }
+  const buyPurchaseMutation = useBuyPurchaseApi()
+
+  const handleBuyPurchases = () => {
+    if (checkedPurchases.length > 0) {
+      const body = checkedPurchases.map((purchase) => {
+        return { product_id: purchase.product._id, buy_count: purchase.buy_count }
+      })
+
+      buyPurchaseMutation.mutate(body, {
+        onSuccess: (data) => {
+          toast.success(data.data.message)
+          refetch()
+        }
+      })
+    }
+  }
+
   return (
-    <div className='bg-neutral-100 py-16'>
+    <div className='bg-neutral-100 py-4'>
       <div className='container'>
         <div className='overflow-auto'>
           <div className='min-w-[1000px]'>
+            <div className='flex items-center border border-[#e0a80066] p-3 mb-2 bg-[#fffefb]'>
+              <img
+                width={24}
+                height={20}
+                src='https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/d9e992985b18d96aab90.png'
+                alt='fs-icon'
+              />
+              <span className='ml-2 font-medium text-gray-900'>
+                Nhấn vào mục Mã giảm giá ở cuối trang để hưởng miễn phí vận chuyển bạn nhé!
+              </span>
+            </div>
+
             <div className='grid grid-cols-12 rounded-sm bg-white py-5 px-9  capitalize  shadow'>
               <div className='col-span-6 bg-white '>
                 <div className='flex items-center gap-3'>
@@ -182,7 +246,9 @@ export default function Cart() {
                         </div>
                       </div>
                       <div className='col-span-1'>
-                        <button className='hover:text-primary'>Xóa</button>
+                        <button className='hover:text-primary' onClick={handleDeletePurchase(index)}>
+                          Xóa
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -203,25 +269,32 @@ export default function Cart() {
           <button className='' onClick={handleCheckAll}>
             Chọn tất cả ({extendedPurchases.length})
           </button>
-          <button className=''>Xóa tất cả</button>
+          <button className='hover:text-primary' onClick={handleDeleteManyPurchase}>
+            Xóa
+          </button>
           <div className='ml-auto flex items-center flex-wrap gap-3'>
             <div>
               <div className='flex items-center md:justify-end flex-wrap'>
-                <div>Tổng thanh toán (0 sản phẩm):</div>
+                <div>Tổng thanh toán ({checkedPurchasesCount} sản phẩm):</div>
                 <div className='ml-2 text-2xl text-primary'>
                   <span className=''>₫</span>
-                  {formatCurrency(138000000)}
+                  {formatCurrency(totalCheckedPurchase).toLocaleUpperCase()}
                 </div>
               </div>
               <div className='flex items-center md:justify-end text-sm'>
                 <div className='text-gray-500'>Tiết kiệm</div>
                 <div className='ml-6 text-primary'>
                   <span className=''>₫</span>
-                  {formatNumberToSocialStyle(138000000).toLocaleUpperCase()}
+                  {formatNumberToSocialStyle(totalSavePurchase).toLocaleUpperCase()}
                 </div>
               </div>
             </div>
-            <Button className='py-3 w-52 uppercase bg-primary text-white hover:bg-primary/80'>Mua hàng</Button>
+            <Button
+              className='py-3 w-52 uppercase bg-primary text-white hover:bg-primary/80'
+              onClick={handleBuyPurchases}
+            >
+              Mua hàng
+            </Button>
           </div>
         </div>
       </div>

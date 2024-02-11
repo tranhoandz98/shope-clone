@@ -9,6 +9,7 @@ import ProtectedRoute from './ProtectedRoute'
 import RejectedRoute from './RejectedRoute'
 import ProductDetail from '~/pages/ProductDetail'
 import Cart from '~/pages/Cart'
+import CartLayout from '~/layouts/CartLayout'
 
 export const routers = [
   {
@@ -47,7 +48,11 @@ export const routers = [
       },
       {
         path: routerMain.CART,
-        element: <Cart />
+        element: (
+          <CartLayout>
+            <Cart />
+          </CartLayout>
+        )
       }
     ]
   },

@@ -22,3 +22,13 @@ export function useAddPurchaseApi() {
 export function useUpdatePurchaseApi() {
   return useMutation({ mutationFn: (body: PurChaseBodyType) => purchaseApi.updatePurchase(body) })
 }
+
+export function useBuyPurchaseApi() {
+  return useMutation({ mutationFn: (body: PurChaseBodyType[]) => purchaseApi.buyProducts(body) })
+}
+
+
+export function useDeletePurchaseApi() {
+  return useMutation({ mutationFn: (ids: string[]) => purchaseApi.deletePurchase(ids) })
+}
+
