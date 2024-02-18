@@ -1,13 +1,9 @@
-import { yupResolver } from '@hookform/resolvers/yup'
-import omit from 'lodash/omit'
-import { useForm } from 'react-hook-form'
-import { Link, createSearchParams, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ImgNotFound from '~/assets/images/not_found.png'
 import { purchasesStatus } from '~/constants/purchases'
 import { routerMain } from '~/constants/routerMain'
 import usePurchaseApi from '~/hook/api/usePurchaseApi'
-import useQueryConfig from '~/hook/useQueryConfig'
-import { Schema, schema } from '~/utils/rules'
+import useSearchProducts from '~/hook/useSearchProducts'
 import { formatCurrency } from '~/utils/utils'
 import NavHeader from '../NavHeader'
 import Popover from '../Popover'
@@ -15,10 +11,9 @@ import CartIcon from '../SvgIcon/CartIcon'
 import SearchIcon from '../SvgIcon/SearchIcon'
 import ShopeeIcon from '../SvgIcon/ShoppeIcon'
 
-type FormData = Pick<Schema, 'name'>
-
 export default function Header() {
-  const searchSchema = schema.pick(['name'])
+  const { onSubmitSearch, register } = useSearchProducts()
+
   const navigate = useNavigate()
 
   // Khi chúng ta chuyển trang thì Header chỉ bị re-render
@@ -28,32 +23,7 @@ export default function Header() {
 
   const { data: purchasesInCartData } = usePurchaseApi({ status: purchasesStatus.inCart })
   const purchasesInCart = purchasesInCartData?.data.data
-
-  const { register, handleSubmit } = useForm<FormData>({
-    resolver: yupResolver(searchSchema)
-  })
-
-  const queryConfig = useQueryConfig()
-
-  const onSubmitSearch = handleSubmit((data) => {
-    const config = queryConfig.order
-      ? omit(
-          {
-            ...queryConfig,
-            name: data.name
-          },
-          ['order', 'sort_by']
-        )
-      : {
-          ...queryConfig,
-          name: data.name
-        }
-
-    navigate({
-      pathname: routerMain.HOME,
-      search: createSearchParams(config).toString()
-    })
-  })
+  const checkPurchasesInCart = purchasesInCart && purchasesInCart?.length > 0
 
   const MAX_PURCHASES = 5
   const genBuyAddToCart = () => {
@@ -89,7 +59,7 @@ export default function Header() {
             <Popover
               renderPopover={
                 <div className='relative rounded-sm border border-gray-200 bg-white shadow-md max-w-[400px]'>
-                  {purchasesInCart && (
+                  {checkPurchasesInCart && (
                     <div className=''>
                       <div className='text-gray-400 capitalize p-3'>Sản phẩm mới thêm</div>
                       <div className=''>
@@ -118,10 +88,12 @@ export default function Header() {
                       </div>
                     </div>
                   )}
-                  {!purchasesInCart && (
+                  {!checkPurchasesInCart && (
                     <div className='p-2 flex w-[30rem] h-[20rem] items-center justify-center'>
-                      <div className='text-center'>
-                        <img src={ImgNotFound} alt='product not exist' className='w-20 h-20'></img>
+                      <div className='text-center '>
+                        <div className='flex justify-center'>
+                          <img src={ImgNotFound} alt='product not exist' className='w-20 h-20'></img>
+                        </div>
                         <div className='text-sm mt-2'>Chưa có sản phẩm</div>
                       </div>
                     </div>
@@ -131,7 +103,7 @@ export default function Header() {
             >
               <Link to={routerMain.CART} className='relative'>
                 <CartIcon className='w-8 h-8' />
-                {purchasesInCart && (
+                {checkPurchasesInCart && (
                   <div className='absolute rounded-[2.75rem] min-w-[.6875rem] text-center -top-[.3875rem] left-[1.25rem] bg-white px-[5px] text-primary shadow leading-[1.2em] h-4 self-center border-1 border-primary shadow-primary'>
                     {purchasesInCart?.length}
                   </div>

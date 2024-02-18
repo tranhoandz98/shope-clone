@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Button from '~/components/Button'
 import ProductRating from '~/components/ProductRating'
@@ -10,16 +11,19 @@ import ChevronLeft from '~/components/SvgIcon/ChevronLeft'
 import ChevronRight from '~/components/SvgIcon/ChevronRight'
 import { purchasesStatus } from '~/constants/purchases'
 import { queryKeyApi } from '~/constants/queryKeyApi'
+import { routerMain } from '~/constants/routerMain'
 import { useApiProductItem } from '~/hook/api/useApiProduct'
+import { useAddPurchaseApi } from '~/hook/api/usePurchaseApi'
 import ProductType from '~/types/product.type'
 import { formatCurrency, formatNumberToSocialStyle, getIdFromNameId, reteSale } from '~/utils/utils'
 import ProductRelate from './component/ProductRelate/ProductRelate'
-import { useAddPurchaseApi } from '~/hook/api/usePurchaseApi'
 
 export default function ProductDetail() {
   const { nameId } = useParams()
   const [buyCount, setBuyCount] = useState(1)
   const queryClient = useQueryClient()
+
+  const navigate = useNavigate()
 
   const id = getIdFromNameId(nameId as string)
   const queryProductItem = useApiProductItem(id as string)
@@ -95,6 +99,16 @@ export default function ProductDetail() {
         }
       }
     )
+  }
+
+  const buyNow = async () => {
+    const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: dataProductItem?._id as string })
+    const purchase = res.data.data
+    navigate(routerMain.CART, {
+      state: {
+        purchaseId: purchase._id
+      }
+    })
   }
 
   if (queryProductItem.isFetching) {
@@ -193,7 +207,9 @@ export default function ProductDetail() {
                 >
                   Thêm vào giỏ hàng
                 </Button>
-                <Button className='py-3 px-3 bg-primary capitalize text-white hover:bg-primary/80'>Mua ngay</Button>
+                <Button className='py-3 px-3 bg-primary capitalize text-white hover:bg-primary/80' onClick={buyNow}>
+                  Mua ngay
+                </Button>
               </div>
             </div>
           </div>
