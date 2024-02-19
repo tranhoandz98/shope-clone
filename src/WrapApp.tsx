@@ -9,7 +9,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'
 
 function WrapApp() {
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { refetchOnWindowFocus: false } }
+    defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 0 } }
   })
   return (
     <>
