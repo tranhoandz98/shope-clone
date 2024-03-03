@@ -15,7 +15,7 @@ export default function Button(props: ButtonProps) {
       // className='  w-full text-center py-3 uppercase bg-primary text-white hover:bg-primary/80'
       type='submit'
     >
-      <span className='mr-2'>{isLoading && <LoadingIcon />}</span>
+      <span>{isLoading && <LoadingIcon className='w-4 h-4 mr-2' />}</span>
       <span>{children}</span>
     </button>
   )

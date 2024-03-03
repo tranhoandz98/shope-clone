@@ -1,4 +1,4 @@
-import User from '~/types/user.type'
+import UserType from '~/types/user.type'
 
 export const LocalStorageEventTarget = new EventTarget()
 
@@ -25,6 +25,6 @@ export const getProfileFromLS = () => {
   return result ? JSON.parse(result) : result
 }
 
-export const setProfileToLS = (profile: User) => {
+export const setProfileToLS = (profile: UserType) => {
   return localStorage.setItem('profile', JSON.stringify(profile))
 }

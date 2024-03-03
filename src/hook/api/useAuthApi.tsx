@@ -1,5 +1,7 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { authApi } from '~/apis/auth.api'
+import { userApi } from '~/apis/user.api'
+import { queryKeyApi } from '~/constants/queryKeyApi'
 import { FormDataLogin, FormDataRegister } from '~/types/auth.type'
 
 export function useAuthLoginApi() {
@@ -16,6 +18,19 @@ export function useAuthRegisterApi() {
 
 export function useAuthLogoutApi() {
   return useMutation({
-    mutationFn: () => authApi.logout()
+    mutationFn: authApi.logout
+  })
+}
+
+export function useUserGetMeApi() {
+  return useQuery({
+    queryKey: [queryKeyApi.user],
+    queryFn: userApi.getMe
+  })
+}
+
+export function useUserUpdateProfileApi() {
+  return useMutation({
+    mutationFn: userApi.updateProfile
   })
 }

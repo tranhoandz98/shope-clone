@@ -2,5 +2,6 @@ export const queryKeyApi = {
   purchases: 'purchases',
   products: 'products',
   product: 'product',
-  categories: 'categories'
+  categories: 'categories',
+  user: 'user'
 } as const
