@@ -27,8 +27,6 @@ export function useBuyPurchaseApi() {
   return useMutation({ mutationFn: (body: PurChaseBodyType[]) => purchaseApi.buyProducts(body) })
 }
 
-
 export function useDeletePurchaseApi() {
   return useMutation({ mutationFn: (ids: string[]) => purchaseApi.deletePurchase(ids) })
 }
-
