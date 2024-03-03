@@ -56,6 +56,9 @@ export class Http {
           const message = data?.message || error.message
           toast.error(message)
         }
+        if (error.response?.status === HttpStatusCode.Unauthorized){
+          clearAuthFromLS()
+        }
         // Bất kì mã trạng thái nào lọt ra ngoài tầm 2xx đều khiến hàm này được trigger\
         // Làm gì đó với lỗi response
         return Promise.reject(error)
