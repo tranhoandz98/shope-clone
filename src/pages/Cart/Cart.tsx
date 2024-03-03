@@ -1,9 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { produce } from 'immer'
+import { keyBy } from 'lodash'
+import React, { useContext, useEffect, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import ImgNotFound from '~/assets/images/not_found.png'
 import Button from '~/components/Button'
 import QuantityController from '~/components/QuantityController/QuantityController'
 import { purchasesStatus } from '~/constants/purchases'
 import { routerMain } from '~/constants/routerMain'
+import { AppContext } from '~/context/app.context'
 import usePurchaseApi, {
   useBuyPurchaseApi,
   useDeletePurchaseApi,
@@ -11,11 +16,6 @@ import usePurchaseApi, {
 } from '~/hook/api/usePurchaseApi'
 import { PurchaseType } from '~/types/purchase.type'
 import { formatCurrency, formatNumberToSocialStyle, generateNameId } from '~/utils/utils'
-import { produce } from 'immer'
-import { keyBy } from 'lodash'
-import { toast } from 'react-toastify'
-import { AppContext } from '~/context/app.context'
-import ImgNotFound from '~/assets/images/not_found.png'
 
 export default function Cart() {
   const { extendedPurchases, setExtendedPurchases } = useContext(AppContext)
