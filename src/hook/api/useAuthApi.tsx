@@ -34,3 +34,9 @@ export function useUserUpdateProfileApi() {
     mutationFn: userApi.updateProfile
   })
 }
+
+export function useUserUpdateAvatarApi() {
+  return useMutation({
+    mutationFn: userApi.uploadAvatar
+  })
+}
