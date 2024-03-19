@@ -14,6 +14,6 @@ export default interface UserType {
 }
 
 export interface UserUpdateProfileType extends Omit<UserType, '_id' | 'email' | 'roles' | 'createdAt' | 'updatedAt'> {
-  // password?: string
-  // newPassword: string
+  password?: string
+  new_password?: string
 }
